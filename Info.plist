@@ -8,6 +8,8 @@
 	<string>Lid Awake</string>
 	<key>CFBundleDisplayName</key>
 	<string>Lid Awake</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleExecutable</key>
 	<string>LidAwake</string>
 	<key>CFBundlePackageType</key>

@@ -8,6 +8,7 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp Info.plist "$APP/Contents/Info.plist"
 cp main.swift "$APP/Contents/Resources/main.swift"
 cp setup-permissions.sh "$APP/Contents/Resources/setup-permissions.sh"
+cp assets/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
 
 swiftc -O -o "$APP/Contents/MacOS/LidAwake" main.swift \
     -F /System/Library/PrivateFrameworks -framework DisplayServices
