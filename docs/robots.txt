@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://deezeddd.github.io/LidAwake-Mac/sitemap.xml
