@@ -37,7 +37,15 @@ macOS only keeps running with the lid closed when an external display is attache
 - macOS 13 Ventura or newer (developed and tested on macOS 26)
 - Xcode or the Xcode Command Line Tools (`xcode-select --install`)
 
-### Build from source
+### Quick install (one line)
+
+```shell
+curl -fsSL https://raw.githubusercontent.com/deezeddd/LidAwake-Mac/main/install.sh | bash
+```
+
+This downloads the source, builds it locally in a few seconds, and installs `~/Applications/LidAwake.app`. Because the app is compiled on your own machine, there is no unsigned binary for Gatekeeper to complain about, and you can read every line of what you just ran, [including the installer](install.sh).
+
+### Or build from a clone
 
 ```shell
 git clone https://github.com/deezeddd/LidAwake-Mac.git
