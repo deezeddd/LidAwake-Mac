@@ -108,3 +108,13 @@ Issues and pull requests are welcome. The whole app lives in [`main.swift`](main
 
 LidAwake is free and open source software, released under the [MIT License](LICENSE).
 Copyright (c) 2026 Vedant Maurya.
+
+---
+
+<div align="center">
+
+Built by [Vedant Maurya](https://github.com/deezeddd) · Follow me on X: [@deezedddd](https://x.com/deezedddd)
+
+If LidAwake keeps your build alive, a ⭐ is appreciated!
+
+</div>
