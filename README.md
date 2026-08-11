@@ -78,6 +78,12 @@ No. `disablesleep` is an official power-management flag and is fully reversed by
 **Could a macOS update break it?**
 The sleep toggle uses only supported interfaces. The brightness feature relies on a private framework, so a future macOS release could break that part; the toggle would be unaffected.
 
+**Why is there no Dock icon?**
+By design. LidAwake is a background menu bar utility (`LSUIElement`), the same convention Amphetamine and MonitorControl follow: it has no windows, so the coffee cup in the menu bar is its whole interface and the Dock stays uncluttered.
+
+**Can I still launch it from the Dock?**
+Yes. Open `~/Applications` in Finder and drag `LidAwake.app` to the right side of the Dock (near the Trash). Clicking it launches the app if it is not already running. Note that as a background app it never shows the Dock's "running" indicator dot. If you prefer never thinking about launching at all, just enable **Start at Login** from the menu instead.
+
 **Why not Amphetamine or KeepingYouAwake?**
 Both are great. KeepingYouAwake (based on `caffeinate`) intentionally does not support closed-lid operation. Amphetamine does, but this project started the day the App Store refused to install it. Two hundred lines of Swift later, this exists, and it also restores your brightness.
 
