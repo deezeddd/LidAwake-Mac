@@ -11,6 +11,8 @@
 
 *A native macOS menu bar utility with no Dock icon, no Electron, no background daemons,<br>and an entire codebase you can read in one sitting.*
 
+<img src="assets/screenshot.png" width="560" alt="LidAwake menu open in the macOS menu bar, with the filled coffee cup icon and the Keep Awake When Lid Is Closed item checked">
+
 </div>
 
 ---
