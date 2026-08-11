@@ -1,55 +1,102 @@
-# LidAwake ☕
+<div align="center">
 
-A tiny native macOS menu bar app that keeps your Mac running when you close the lid. One click to toggle, no Dock icon, a few MB of RAM.
+# ☕ LidAwake
 
-Built because Amphetamine wouldn't install and the Shortcuts menu bar pin never showed up. Sometimes the best app is the 200-line one you compile yourself.
+**Keep your Mac awake with the lid closed. One click from the menu bar.**
+
+[![Platform](https://img.shields.io/badge/platform-macOS%2013%2B-blue)](#requirements)
+[![Language](https://img.shields.io/badge/language-Swift-F05138?logo=swift&logoColor=white)](main.swift)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen)](#contributing)
+
+*A native macOS menu bar utility with no Dock icon, no Electron, no background daemons,<br>and an entire codebase you can read in one sitting.*
+
+</div>
+
+---
+
+## Why LidAwake?
+
+macOS only keeps running with the lid closed when an external display is attached (clamshell mode). If you want to close the lid while a build finishes, a server runs, or music plays, your options are third-party apps or remembering `pmset` incantations. LidAwake wraps the official Apple power-management flag in a one-click menu bar toggle, and adds one thing nothing else does: it remembers your display brightness across every lid close and reopen.
 
 ## Features
 
-- **Menu bar toggle**: a coffee cup icon in the menu bar. Outline cup = normal sleep, filled cup = the Mac keeps running with the lid closed. The icon always reflects the real system state, even if you change it from the terminal.
-- **Brightness memory**: when the lid closes, LidAwake saves your current brightness and drops it to zero. When you reopen the lid, it restores the exact level you had. Also works around regular display sleep.
-- **Start at Login**: toggle it from the menu, implemented with Apple's `SMAppService`.
-- **Native all the way**: AppKit, SF Symbols, standard menus and dialogs. Adapts to light and dark mode. No Electron, no background daemons, no network access.
-- **Audit trail**: every lid and brightness event is logged to `~/Library/Logs/LidAwake.log`.
+- ☕ **One-click toggle**: a coffee cup in the menu bar. Outline cup means normal sleep, filled cup means the Mac keeps running with the lid closed.
+- 🔆 **Brightness memory**: on lid close, your current brightness is saved and the panel is set to zero. On reopen, it is restored to the exact level you had. Works around regular display sleep too.
+- 🔁 **Always truthful**: the icon reflects the real system state every time the menu opens, even if you changed the setting from the terminal.
+- 🚀 **Start at Login**: one menu item, implemented with Apple's `SMAppService`.
+- 🪶 **Native and tiny**: AppKit, SF Symbols, standard dialogs. Adapts to light and dark mode. A few MB of RAM.
+- 📜 **Audit trail**: every lid and brightness event is logged to `~/Library/Logs/LidAwake.log`.
 
-## Requirements
+## Installation
 
-- macOS 13 Ventura or newer (built and tested on macOS 26)
-- Xcode or the Xcode Command Line Tools (for `swiftc`)
+### Requirements
 
-## Install
+- macOS 13 Ventura or newer (developed and tested on macOS 26)
+- Xcode or the Xcode Command Line Tools (`xcode-select --install`)
 
-```bash
+### Build from source
+
+```shell
 git clone https://github.com/deezeddd/LidAwake-Mac.git
 cd LidAwake-Mac
 ./build.sh              # compiles and installs ~/Applications/LidAwake.app
-./setup-permissions.sh  # one-time sudo rule so the toggle needs no password
+./setup-permissions.sh  # one-time rule so the toggle needs no password
 open ~/Applications/LidAwake.app
 ```
 
-The setup script installs a sudoers rule scoped to exactly two commands, `pmset -a disablesleep 1` and `pmset -a disablesleep 0`, for your user only. It is validated with `visudo` before being installed. If you skip this step, the app will show a dialog with the command whenever you try to toggle.
+> [!NOTE]
+> `setup-permissions.sh` installs a sudoers rule scoped to exactly two commands, `pmset -a disablesleep 1` and `pmset -a disablesleep 0`, for your user only. It is validated with `visudo` before being installed. If you skip this step, the app shows a dialog with the command whenever you try to toggle.
+
+## Usage
+
+| Menu item | What it does |
+| --- | --- |
+| **Keep Awake When Lid Is Closed** | Toggles lid-awake mode. Checkmark and filled cup when active. |
+| **Start at Login** | Registers or unregisters the app as a login item. |
+| **Quit Lid Awake** | Quits the app. The sleep setting stays however you left it. |
+
+> [!WARNING]
+> While the toggle is ON, the Mac will not sleep for **any** reason, including on battery inside a bag. Toggle it off before you pack up. The filled cup is your reminder. A lid-closed laptop also dissipates heat worse, so AC power is best.
 
 ## How it works
 
-- **Sleep toggle**: flips Apple's supported `pmset disablesleep` power-management flag via `sudo -n`. No kernel extensions, no hacks.
-- **Lid detection**: closing the lid does not fire a display-sleep notification; macOS disconnects the built-in display entirely. So LidAwake polls the `AppleClamshellState` property of `IOPMrootDomain` every 2 seconds to catch lid transitions reliably.
-- **Brightness**: uses the private `DisplayServices` framework (`DisplayServicesGetBrightness` / `DisplayServicesSetBrightness`), the same API used by tools like MonitorControl. The saved level lives in `UserDefaults` with a no-overwrite guard, so a crash or restart between close and open never loses your original brightness.
+| Piece | Mechanism |
+| --- | --- |
+| Sleep toggle | Apple's supported `pmset disablesleep` flag, flipped via `sudo -n`. No kernel extensions, no SIP changes, no hacks. |
+| Lid detection | Closing the lid does not fire a display-sleep notification; macOS disconnects the built-in display entirely. LidAwake polls the `AppleClamshellState` property of `IOPMrootDomain` every 2 seconds to catch lid transitions reliably. |
+| Brightness | The private `DisplayServices` framework (`DisplayServicesGetBrightness` / `SetBrightness`), the same API used by [MonitorControl](https://github.com/MonitorControl/MonitorControl). The saved level lives in `UserDefaults` with a no-overwrite guard, so a crash between close and open never loses your original brightness. |
 
-## Caveats
+## FAQ
 
-- While the toggle is ON, the Mac will not sleep for **any** reason, including on battery inside a bag. Toggle it off before you pack up. The filled cup is your reminder.
-- A lid-closed laptop dissipates heat worse. Best used on AC power.
-- `DisplayServices` is a private framework, so a future macOS release could break the brightness feature (the sleep toggle would be unaffected).
+**Is this dangerous?**
+No. `disablesleep` is an official power-management flag and is fully reversed by toggling off (or `sudo pmset -a disablesleep 0`). The app itself runs unprivileged. The only real caution is behavioral: see the warning above about bags and batteries.
+
+**Why does it need a sudoers rule?**
+`pmset disablesleep` requires root. The rule lets exactly those two commands run without a password prompt, so the toggle is one click instead of a password dialog every time. Nothing else gains elevated rights.
+
+**Could a macOS update break it?**
+The sleep toggle uses only supported interfaces. The brightness feature relies on a private framework, so a future macOS release could break that part; the toggle would be unaffected.
+
+**Why not Amphetamine or KeepingYouAwake?**
+Both are great. KeepingYouAwake (based on `caffeinate`) intentionally does not support closed-lid operation. Amphetamine does, but this project started the day the App Store refused to install it. Two hundred lines of Swift later, this exists, and it also restores your brightness.
 
 ## Uninstall
 
-```bash
+```shell
 sudo pmset -a disablesleep 0
 sudo rm /etc/sudoers.d/lid-awake
 rm -rf ~/Applications/LidAwake.app
 rm -f ~/Library/Logs/LidAwake.log
 ```
 
+No other traces are left on the system.
+
+## Contributing
+
+Issues and pull requests are welcome. The whole app lives in [`main.swift`](main.swift); `build.sh` gives you a compile-install-run loop in a few seconds. Please keep changes native (AppKit, no dependencies) and update the README when behavior changes.
+
 ## License
 
-[MIT](LICENSE)
+LidAwake is free and open source software, released under the [MIT License](LICENSE).
+Copyright (c) 2026 Vedant Maurya.
